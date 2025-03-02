@@ -122,4 +122,82 @@ const editProfile = async (req, res) => {
     .json({ success: true, message: "Profile updated..", user });
 };
 
-export { userRegister, userLogin, userLogout };
+const getSuggestedUser = async (req, res) => {
+  const suggestedUser = await User.find({ _id: { $ne: req.id } }).select(
+    "-password"
+  );
+  if (!suggestedUser) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No Suggested User Found.." });
+  }
+
+  return res.status(200).json({ success: true, suggestedUser });
+};
+
+const followOrunfollow = async () => {
+  try {
+    const followers = req.id; //jo mujhe folloow kr raha hai
+    const following = req.params.id; // jise me follow krta hu
+
+    if (followers === following) {
+      return res.status(400).json({
+        success: false,
+        message: "You can't follow & unfollow yourself",
+      });
+    }
+    const user = await User.findById(followers);
+    const targetUser = await User.findById(following);
+    if (!user || !targetUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+    //check follow or not follow
+
+    const isFollowing = user.following.includes(following);
+
+    if (isFollowing) {
+      //unfollow logics
+      await Promise.all([
+        User.findByIdAndUpdate(
+          { _id: following },
+          { $pull: { following: following } }
+        ),
+        User.findByIdAndUpdate(
+          { _id: followers },
+          { $pull: { followers: followers } }
+        ),
+      ]);
+      res
+        .status(200)
+        .json({ success: true, message: "User Unfollowed Successfully.." });
+    } else {
+      //follow logics here
+      await Promise.all([
+        User.findByIdAndUpdate(
+          { _id: following },
+          { $push: { following: following } }
+        ),
+        User.findByIdAndUpdate(
+          { _id: followers },
+          { $push: { followers: followers } }
+        ),
+      ]);
+      res
+        .status(200)
+        .json({ success: true, message: "User Followed Successfully.." });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export {
+  userRegister,
+  userLogin,
+  userLogout,
+  followOrunfollow,
+  getProfile,
+  editProfile,
+  getSuggestedUser,
+};

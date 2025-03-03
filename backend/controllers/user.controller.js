@@ -1,6 +1,10 @@
-import { User } from "../models/user.model";
-import { connectCloudinary } from "../utils/cloudinary";
-
+import { User } from "../models/user.model.js";
+import { connectCloudinary } from "../utils/cloudinary.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
+import { getDataUri } from "../utils/datauri.js";
+import { upload } from "../middlewares/multer.js";
 const userRegister = async (req, res) => {
   const { email, password, username } = req.body;
   if (!email || !username || !password) {
@@ -24,20 +28,24 @@ const userRegister = async (req, res) => {
     password: hashedPassword,
   });
 
-  res
-    .status(201)
-    .json({ success: true, message: "User registerd Successfully" }, newUser);
+  res.status(201).json({
+    success: true,
+    message: "User registerd Successfully",
+    newUser: {
+      email: newUser.email,
+      username: newUser.username,
+    },
+  });
 };
-
 const userLogin = async (req, res) => {
-  const { email, password } = req.boddy;
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return res
       .status(400)
       .json({ success: false, message: "Plese fill all required fields" });
   }
-  const user = await User.findOne({ email });
+  let user = await User.findOne({ email });
   if (!user) {
     return res
       .status(400)
@@ -68,9 +76,11 @@ const userLogin = async (req, res) => {
     posts: user.posts,
     savedPost: user.savedPost,
   };
-  res.cookies("token", token, cookiesOption).status(200).json({
+
+  res.status(200).cookie("token", token, cookiesOption).json({
     success: true,
     message: "User Logged In Successfully..",
+    user,
     token,
   });
 };
@@ -96,10 +106,21 @@ const editProfile = async (req, res) => {
   const userId = req.id;
   const { bio, gender } = req.body;
   let profilePicture = req.file;
+  let cloudResponse;
   if (profilePicture) {
-    const fileUri = getDataUri(profilePicture).content;
-    const cloudResponse = await connectCloudinary.uploader.upload(fileUri);
+    try {
+      cloudResponse = await cloudinary.uploader.upload(profilePicture.path, {
+        resource_type: "image",
+      });
+      console.log("Image Uploaded:", cloudResponse.secure_url);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Image upload failed" });
+    }
   }
+
+  //console.log(userId);
 
   const user = await User.findById(userId);
 

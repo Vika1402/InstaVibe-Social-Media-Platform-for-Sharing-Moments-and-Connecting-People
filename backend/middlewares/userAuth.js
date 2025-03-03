@@ -1,23 +1,28 @@
-import jwt from "jwtwebtoken";
-const userVerify = async (req, res, next) => {
+import jwt from "jsonwebtoken";
+
+const isAuthenticated = async (req, res, next) => {
   try {
-    const token = req.header?.token || req.cookies?.token;
+    const token =
+      req.headers["authorization"]?.split(" ")[1] || req.cookies?.token;
+
     if (!token) {
       return res
         .status(401)
         .json({ success: false, message: "User Not Authorized" });
     }
-    let decode = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!decode) {
-      return res.status(401).json({ success: false, message: "Invalid Token" });
-    }
-    req.id = decode.user_id;
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decode);
+
+    req.id = decode.id;
+
     next();
   } catch (error) {
-    console.log(error);
-    next();
+    console.error("Authentication Error:", error.message);
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid or Expired Token" });
   }
 };
 
-export { userVerify };
+export { isAuthenticated };

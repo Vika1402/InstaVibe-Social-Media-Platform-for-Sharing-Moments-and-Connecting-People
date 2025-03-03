@@ -6,7 +6,7 @@ import { Comment } from "../models/comment.model.js";
 const addNewPost = async (req, res) => {
   try {
     const { caption } = req.body;
-    const { image } = req.file;
+    const image = req.file;
     const author_id = req.id;
     if (!image) {
       return res
@@ -14,17 +14,22 @@ const addNewPost = async (req, res) => {
         .json({ success: false, message: "post image required" });
     }
     const user = await User.findById(author_id);
-    //image upload
-    const optimizedImageBuffer = await sharp(image.buffer)
-      .resize({ width: 800, height: 800, fit: "inside" })
-      .toFormat("jpeg", { quality: 80 })
-      .toBuffer();
-    //buffer to data uri
-    const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString(
-      "base64"
-    )}`;
 
-    const cloudResponse = await cloudinary.uploader.upload(fileUri);
+    // const optimizedImageBuffer = await sharp(image.buffer)
+    //   .resize({ width: 800, height: 800, fit: "inside" })
+    //   .toFormat("jpeg", { quality: 80 })
+    //   .toBuffer();
+    // //buffer to data uri
+    // const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString(
+    //   "base64"
+    // )}`;
+
+    let cloudResponse = await cloudinary.uploader.upload(image.path, {
+      resource_type: "image",
+    });
+
+    console.log(cloudResponse.secure_url);
+
     const post = await Post.create({
       caption,
       image: cloudResponse.secure_url,
@@ -160,13 +165,16 @@ const deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
     const authorId = req.id;
+    console.log(postId, authorId);
 
-    const post = Post.findById(postId);
+    const post = await Post.findById(postId);
     if (!post) {
       return res
         .status(404)
         .json({ message: "Post not Found", success: false });
     }
+    //console.log(post.author);
+
     if (post.author.toString() !== authorId) {
       return res
         .status(403)
@@ -175,6 +183,7 @@ const deletePost = async (req, res) => {
 
     await Post.findByIdAndDelete(postId);
     let user = await User.findById(authorId);
+
     user.posts = user.posts.filter((id) => id.toString() !== postId);
     await user.save();
     await Comment.deleteMany({ post: postId });
@@ -216,4 +225,5 @@ export {
   addComments,
   getCommentsPostWise,
   deletePost,
+  savedPost,
 };

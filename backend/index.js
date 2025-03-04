@@ -9,11 +9,8 @@ dotenv.config();
 connectCloudinary();
 const app = express();
 app.use(express.json());
-const corsOptions = {
-  origin: "*",
-  credentials: true,
-};
-app.use(cors(corsOptions));
+const origin = "*";
+app.use(cors({ origin }));
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 app.use("/api", router);

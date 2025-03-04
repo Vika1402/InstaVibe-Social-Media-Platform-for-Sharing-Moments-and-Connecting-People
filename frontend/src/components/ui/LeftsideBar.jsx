@@ -41,7 +41,7 @@ const sidebarItem = [
     icon: (
       <Avatar>
         <AvatarImage
-          className="w-8 h-8"
+          className="w-8 h-8 rounded-full"
           src="https://media.istockphoto.com/id/1681388313/vector/cute-baby-panda-cartoon-on-white-background.jpg?s=1024x1024&w=is&k=20&c=Q7snaeFxLlgaiTHdobMD1gPnEgQtGst4Kflf7iiW1XU="
         />
         <AvatarFallback>CN</AvatarFallback>
@@ -75,7 +75,7 @@ function LeftsideBar() {
   return (
     <div className="fixed top-0 left-0 px-4 z-10 border-r border-gray-300 w-[16%] h-screen">
       <div className="flex flex-col ">
-        <h1 className="text-xl font-bold">InstaVibe</h1>
+        <h1 className="text-xl font-bold my-8 pl-3">InstaVibe</h1>
         {sidebarItem.map((item, index) => {
           return (
             <div

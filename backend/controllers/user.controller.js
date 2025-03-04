@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import { getDataUri } from "../utils/datauri.js";
 import { upload } from "../middlewares/multer.js";
+import { Post } from "../models/post.model.js";
 const userRegister = async (req, res) => {
   const { email, password, username } = req.body;
   if (!email || !username || !password) {
@@ -65,6 +66,17 @@ const userLogin = async (req, res) => {
     httpOnly: true,
     sameSite: "strict",
   };
+  //populates is post id the post array
+  const populatedPost = await Promise.all(
+    user.posts.map(async (postId) => {
+      const post = await Post.findById(postId);
+      if (post && post.author.equals(user._id)) {
+        return post;
+      } else {
+        return null;
+      }
+    })
+  );
   user = {
     _id: user._id,
     username: user.username,
@@ -73,7 +85,7 @@ const userLogin = async (req, res) => {
     profilePicture: user.profilePicture,
     followers: user.followers,
     following: user.following,
-    posts: user.posts,
+    posts: populatedPost,
     savedPost: user.savedPost,
   };
 

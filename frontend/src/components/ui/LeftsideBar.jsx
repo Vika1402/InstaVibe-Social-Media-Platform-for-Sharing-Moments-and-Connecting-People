@@ -1,3 +1,4 @@
+import store from "@/redux/store";
 import axiosInstance from "@/utils/axiosInstant";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
@@ -10,52 +11,14 @@ import {
   TrendingUp,
 } from "lucide-react";
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-const sidebarItem = [
-  {
-    icon: <Home />,
-    text: "Home",
-  },
-  {
-    icon: <Search />,
-    text: "Search",
-  },
-  {
-    icon: <TrendingUp />,
-    text: "explore",
-  },
-  {
-    icon: <MessageSquare />,
-    text: "message",
-  },
-  {
-    icon: <Heart />,
-    text: "Notification",
-  },
-  {
-    icon: <PlusSquare />,
-    text: "create",
-  },
-  {
-    icon: (
-      <Avatar>
-        <AvatarImage
-          className="w-8 h-8 rounded-full"
-          src="https://media.istockphoto.com/id/1681388313/vector/cute-baby-panda-cartoon-on-white-background.jpg?s=1024x1024&w=is&k=20&c=Q7snaeFxLlgaiTHdobMD1gPnEgQtGst4Kflf7iiW1XU="
-        />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-    ),
-    text: "Profile",
-  },
-  {
-    icon: <LogOut />,
-    text: "Logout",
-  },
-];
+
 function LeftsideBar() {
   const navigate = useNavigate();
+  const { user } = useSelector((store) => store.auth);
+
   const logoutHandler = async () => {
     try {
       const res = await axiosInstance.post("/api/user/logout");
@@ -72,6 +35,48 @@ function LeftsideBar() {
       logoutHandler();
     }
   };
+  const sidebarItem = [
+    {
+      icon: <Home />,
+      text: "Home",
+    },
+    {
+      icon: <Search />,
+      text: "Search",
+    },
+    {
+      icon: <TrendingUp />,
+      text: "explore",
+    },
+    {
+      icon: <MessageSquare />,
+      text: "message",
+    },
+    {
+      icon: <Heart />,
+      text: "Notification",
+    },
+    {
+      icon: <PlusSquare />,
+      text: "create",
+    },
+    {
+      icon: (
+        <Avatar>
+          <AvatarImage
+            className="w-8 h-8 rounded-full"
+            src={user?.profilePicture}
+          />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      ),
+      text: "Profile",
+    },
+    {
+      icon: <LogOut />,
+      text: "Logout",
+    },
+  ];
   return (
     <div className="fixed top-0 left-0 px-4 z-10 border-r border-gray-300 w-[16%] h-screen">
       <div className="flex flex-col ">

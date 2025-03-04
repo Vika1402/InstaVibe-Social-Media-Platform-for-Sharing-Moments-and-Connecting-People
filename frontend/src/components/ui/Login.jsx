@@ -6,6 +6,8 @@ import axiosInstance from "@/utils/axiosInstant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/authSlice";
 
 function Login() {
   const [input, setInput] = useState({
@@ -13,6 +15,7 @@ function Login() {
     password: "",
   });
   const naviagte = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -27,6 +30,7 @@ function Login() {
       if (res.data.success) {
         console.log(res.data);
         toast.success(res.data.message);
+        dispatch(setAuthUser(res.data.user));
         naviagte("/");
       }
     } catch (error) {
@@ -80,7 +84,7 @@ function Login() {
         )}
 
         <p>
-          Don't have an account?{" "}
+          Don't have an account?
           <span
             onClick={() => naviagte("/signup")}
             className="text-blue-500 cursor-pointer"

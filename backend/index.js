@@ -9,8 +9,13 @@ dotenv.config();
 connectCloudinary();
 const app = express();
 app.use(express.json());
-const origin = "*";
-app.use(cors({ origin }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 app.use("/api", router);

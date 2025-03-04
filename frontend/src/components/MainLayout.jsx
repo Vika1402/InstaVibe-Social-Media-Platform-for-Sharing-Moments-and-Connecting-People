@@ -1,11 +1,12 @@
 import { Outdent } from "lucide-react";
 import React from "react";
 import { Outlet } from "react-router-dom";
+import LeftsideBar from "./ui/LeftsideBar";
 
 function MainLayout() {
   return (
     <div>
-      sidebar
+      <LeftsideBar />
       <div>
         <Outlet />
       </div>

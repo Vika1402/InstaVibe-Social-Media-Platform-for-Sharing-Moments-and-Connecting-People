@@ -61,11 +61,7 @@ const userLogin = async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "3d",
   });
-  const cookiesOption = {
-    expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    sameSite: "strict",
-  };
+
   //populates is post id the post array
   const populatedPost = await Promise.all(
     user.posts.map(async (postId) => {
@@ -88,10 +84,16 @@ const userLogin = async (req, res) => {
     posts: populatedPost,
     savedPost: user.savedPost,
   };
+  const cookiesOption = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict", // or "lax" if needed
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3), 
+  };
 
   res.status(200).cookie("token", token, cookiesOption).json({
     success: true,
-    message: "User Logged In Successfully..",
+    message: "Welcome to Instavibe ready for vibing ..",
     user,
     token,
   });

@@ -5,6 +5,7 @@ import { Button } from "./button";
 import axiosInstance from "@/utils/axiosInstant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 function Login() {
   const [input, setInput] = useState({
@@ -24,11 +25,13 @@ function Login() {
       const res = await axiosInstance.post("/api/user/login", input);
 
       if (res.data.success) {
+        console.log(res.data);
         toast.success(res.data.message);
-        setInput({ email: "", password: "" });
+        naviagte("/");
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
+      setInput({ email: "", password: "" });
       //console.log(error);
     } finally {
       setLoading(false);
@@ -67,7 +70,15 @@ function Login() {
             className="focus-visible:ring-transparent my-2"
           />
         </div>
-        <Button>Login</Button>
+        {loading ? (
+          <Button>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please Wait
+          </Button>
+        ) : (
+          <Button>Login</Button>
+        )}
+
         <p>
           Don't have an account?{" "}
           <span

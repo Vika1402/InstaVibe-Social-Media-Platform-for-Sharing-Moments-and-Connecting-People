@@ -5,6 +5,7 @@ import { Button } from "./button";
 import axiosInstance from "@/utils/axiosInstant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 function Signup() {
   const [input, setInput] = useState({
@@ -77,7 +78,14 @@ function Signup() {
             className="focus-visible:ring-transparent my-2"
           />
         </div>
-        <Button>Signup</Button>
+        {loading ? (
+          <Button>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please Wait
+          </Button>
+        ) : (
+          <Button>Sign Up</Button>
+        )}
         <p>
           Have an account?{" "}
           <span

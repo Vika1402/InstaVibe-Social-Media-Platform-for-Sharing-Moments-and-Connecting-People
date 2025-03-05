@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import {
   Bookmark,
   Heart,
@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import { Button } from "./button";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
-import { FaHeart } from "react-icons/fa";
+
 import CommentDialog from "./CommentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -21,16 +21,20 @@ import axiosInstance from "@/utils/axiosInstant";
 import { setPosts } from "@/redux/postSlice";
 function Post({ post }) {
   const [open, setOpen] = useState(false);
-  const [text, settext] = useState("");
+  const [content, setContent] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { posts } = useSelector((state) => state.post);
+  const [liked, setLiked] = useState(post.likes.includes(user._id) || false);
+  const [postLike, setPostLike] = useState(post.likes.length);
+  const [comment, setComment] = useState(post.comments);
+
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {
-      settext(inputText);
+      setContent(inputText);
     } else {
-      settext("");
+      setContent("");
     }
   };
   const deletePostHandler = async () => {
@@ -55,6 +59,59 @@ function Post({ post }) {
       console.log(error);
     } finally {
       setOpen(false);
+    }
+  };
+
+  const LikeAnsDislikeHAndler = async (postId) => {
+    const action = liked ? "dislike" : "like";
+    try {
+      const res = await axiosInstance.post(`/api/post/${action}/${postId}`);
+
+      if (res.data?.success) {
+        const updatedLikes = liked ? postLike - 1 : postLike + 1;
+        setPostLike(updatedLikes);
+        setLiked(!liked);
+        //post update for instant like ddislike notify
+        const updatedPostData = posts.map((p) =>
+          p._id === postId
+            ? {
+                ...p,
+                likes: liked
+                  ? p.likes.filter((id) => id !== user._id)
+                  : [...p.likes, user._id],
+              }
+            : p
+        );
+        dispatch(setPosts(updatedPostData));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+    }
+  };
+
+  const commentHandler = async (postId) => {
+    try {
+      const res = await axiosInstance.post(`/api/post/comment/${postId}`, {
+        content,
+      });
+      if (res.data.success) {
+        const updatedCommentData = [...comment, res.data.message];
+        setComment(updatedCommentData);
+        const updatedPostData = posts.map((p) =>
+          p._id === postId
+            ? {
+                ...p,
+                comments: updatedCommentData,
+              }
+            : p
+        );
+        dispatch(setPosts(updatedPostData));
+        setContent("");
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -107,11 +164,22 @@ function Post({ post }) {
 
       <div className="flex items-center  justify-between my-2 mt-2">
         <div className="flex items-center mx-3 gap-3">
-          <FaRegHeart
-            size={"24px"}
-            cursor={"pointer"}
-            className=" hover:text-gray-600"
-          />
+          {liked ? (
+            <FaHeart
+              onClick={() => LikeAnsDislikeHAndler(post._id)}
+              size={"24px"}
+              cursor={"pointer"}
+              className="text-red-600 "
+            />
+          ) : (
+            <FaRegHeart
+              onClick={() => LikeAnsDislikeHAndler(post._id)}
+              size={"24px"}
+              cursor={"pointer"}
+              className=" hover:text-gray-600"
+            />
+          )}
+
           <MessageCircle
             onClick={() => setOpen(true)}
             className=" cursor-pointer hover:text-gray-600"
@@ -123,7 +191,7 @@ function Post({ post }) {
         <Bookmark cursor={"pointer"} className="hover:text-gray-600" />
       </div>
 
-      <span className="font-medium block mb-2">{post.likes.length} likes</span>
+      <span className="font-medium block mb-2">{postLike} likes</span>
       <p>
         <span className=" font-medium mr-2">{post.author.username}</span>
         {post?.caption}
@@ -138,10 +206,15 @@ function Post({ post }) {
           placeholder="Add a comments"
           className=" w-full outline-0 text-sm"
           onChange={changeEventHandler}
-          value={text}
+          value={content}
         />
-        {text && (
-          <span className="text-blue-600 bg-gray-100 rounded-sm ">Post</span>
+        {content && (
+          <span
+            onClick={() => commentHandler(post._id)}
+            className="text-blue-600 bg-gray-100 rounded-sm cursor-pointer"
+          >
+            Post
+          </span>
         )}
       </div>
     </div>

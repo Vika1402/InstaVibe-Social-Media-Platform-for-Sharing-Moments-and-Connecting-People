@@ -121,29 +121,52 @@ const disLikePost = async (req, res) => {
   return res.status(200).json({ success: true, message: "post disliked " });
 };
 
-const addComments = async () => {
+const addComments = async (req, res) => {
   try {
     const postId = req.params.id;
-    const commentkarnewalaUserId = req.id;
+    const userId = req.id; // Renamed for clarity
     const { content } = req.body;
-    const post = await post.findById(postId);
+
+    // Validate content
     if (!content) {
-      res.status(400).json({ success: false, message: "content is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Content is required" });
     }
 
-    const comments = await Comment.create({
-      content,
-      author: commentkarnewalaUserId,
-      post: postId,
-    }).populate({ path: "author", select: "username,profilePicture" });
+    // Find the post by ID
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
 
-    post.comments.push(comments._id);
+    // Create the comment
+    const comment = await Comment.create({
+      content,
+      author: userId,
+      post: postId,
+    });
+
+    // Populate author details after creation
+    await comment.populate({
+      path: "author",
+      select: "username profilePicture",
+    });
+
+    // Add the comment to the post
+    post.comments.push(comment._id);
     await post.save();
+
     return res
       .status(200)
-      .json({ success: true, message: "Comment Added", comments });
+      .json({ success: true, message: "Comment Added", comment });
   } catch (error) {
     console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error, try again later" });
   }
 };
 

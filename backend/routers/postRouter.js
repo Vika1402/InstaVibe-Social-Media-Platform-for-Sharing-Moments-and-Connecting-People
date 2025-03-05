@@ -21,13 +21,13 @@ postRouter.post(
   upload.single("image"),
   addNewPost
 );
-postRouter.post("/get-all-post",isAuthenticated, getAllPost);
+postRouter.get("/get-all-post", isAuthenticated, getAllPost);
 postRouter.get("/get-user-post", isAuthenticated, getUserPost);
 postRouter.post("/like-post/:id", isAuthenticated, likePost);
 postRouter.post("/dislike-post/:id", isAuthenticated, disLikePost);
 postRouter.post("/add-comment/:id", addComments);
 postRouter.get("/get-comment-postwise/:id", getCommentsPostWise);
 postRouter.post("/delete-post/:id", isAuthenticated, deletePost);
-postRouter.post("/saved-post/:id",isAuthenticated, savedPost);
+postRouter.post("/saved-post/:id", isAuthenticated, savedPost);
 
 export { postRouter };

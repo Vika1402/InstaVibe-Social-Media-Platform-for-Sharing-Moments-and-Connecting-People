@@ -13,7 +13,7 @@ import { Button } from "./button";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import { FaHeart } from "react-icons/fa";
 import CommentDialog from "./CommentDialog";
-function Post() {
+function Post({ post }) {
   const [open, setOpen] = useState(false);
   const [text, settext] = useState("");
   const changeEventHandler = (e) => {
@@ -36,7 +36,7 @@ function Post() {
             />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <h1>username</h1>
+          <h1>{post.author.username}</h1>
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -65,9 +65,8 @@ function Post() {
         </Dialog>
       </div>
       <img
-        className="mt-2 rounded-lg my-2 w-full  aspect-square object-cover"
-        src="https://images.unsplash.com/photo-1740940349301-d29d8c62e0f4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxNHx8fGVufDB8fHx8fA%3D%3D"
-        alt=""
+        className="mt-2 rounded-lg my-2 w-full  aspect-square  object-contain"
+        src={post.image}
       />
 
       <div className="flex items-center  justify-between my-2 mt-2">
@@ -88,13 +87,13 @@ function Post() {
         <Bookmark cursor={"pointer"} className="hover:text-gray-600" />
       </div>
 
-      <span className="font-medium block mb-2">1k likes</span>
+      <span className="font-medium block mb-2">{post.likes.length} likes</span>
       <p>
-        <span className=" font-medium mr-2">username</span>
-        caption
+        <span className=" font-medium mr-2">{post.author.username}</span>
+        {post?.caption}
       </p>
       <span className="text-gray-400" onClick={() => setOpen(true)}>
-        view all 23 comments
+        View All {post.comments.length} Comments
       </span>
       <CommentDialog open={open} setOpen={setOpen} />
       <div className="flex justify-between mx-1">

@@ -13,15 +13,48 @@ import { Button } from "./button";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import { FaHeart } from "react-icons/fa";
 import CommentDialog from "./CommentDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+
+import axiosInstance from "@/utils/axiosInstant";
+
+import { setPosts } from "@/redux/postSlice";
 function Post({ post }) {
   const [open, setOpen] = useState(false);
   const [text, settext] = useState("");
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { posts } = useSelector((state) => state.post);
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {
       settext(inputText);
     } else {
       settext("");
+    }
+  };
+  const deletePostHandler = async () => {
+    try {
+      const res = await axiosInstance.post(
+        `/api/post/delete-post/${post._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(res.data);
+
+      if (res.data.success) {
+        const updatedPost = posts.filter(
+          (postItem) => postItem?._id !== post?._id
+        );
+        dispatch(setPosts(updatedPost));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.log(error);
+    } finally {
+      setOpen(false);
     }
   };
   return (
@@ -55,12 +88,15 @@ function Post({ post }) {
             >
               Add To Favorites
             </Button>
-            <Button
-              variant="ghost"
-              className="cursor-pointer w-fit border-2  text-red-800  font-normal"
-            >
-              Delete
-            </Button>
+            {user && user?._id === post?.author._id && (
+              <Button
+                onClick={deletePostHandler}
+                variant="ghost"
+                className="cursor-pointer w-fit border-2  text-red-800  font-normal"
+              >
+                Delete
+              </Button>
+            )}
           </DialogContent>
         </Dialog>
       </div>

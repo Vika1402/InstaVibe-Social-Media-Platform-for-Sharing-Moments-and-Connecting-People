@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import {
   Bookmark,
-  Heart,
   MessageCircle,
   MoreHorizontal,
   Save,

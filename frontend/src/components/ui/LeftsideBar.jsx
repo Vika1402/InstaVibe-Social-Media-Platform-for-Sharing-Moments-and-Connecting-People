@@ -45,6 +45,9 @@ function LeftsideBar() {
     if (textType === "Create") {
       setOpen(true);
     }
+    if (textType === "Profile") {
+      navigate(`/profile/${user?._id}`);
+    }
   };
   const sidebarItem = [
     {

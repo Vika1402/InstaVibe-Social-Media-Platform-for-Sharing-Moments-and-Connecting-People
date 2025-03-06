@@ -88,7 +88,7 @@ const userLogin = async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict", // or "lax" if needed
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3), 
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
   };
 
   res.status(200).cookie("token", token, cookiesOption).json({
@@ -167,7 +167,7 @@ const getSuggestedUser = async (req, res) => {
       .json({ success: false, message: "No Suggested User Found.." });
   }
 
-  return res.status(200).json({ success: true, suggestedUser });
+  return res.status(200).json({ success: true, users: suggestedUser });
 };
 
 const followOrunfollow = async () => {

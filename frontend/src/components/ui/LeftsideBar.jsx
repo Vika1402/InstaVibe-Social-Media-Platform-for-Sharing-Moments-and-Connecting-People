@@ -29,7 +29,7 @@ function LeftsideBar() {
       if (res.data.success) {
         dispatch(setAuthUser(null));
         setSelectedPost(null);
-        dispatch(setPosts([]));
+        dispatch(setPosts(null));
         navigate("/login");
         toast.success(res.data.message);
       }

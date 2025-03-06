@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import axiosInstance from "@/utils/axiosInstant";
 
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
+import { Badge } from "./badge";
 function Post({ post }) {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
@@ -126,7 +127,10 @@ function Post({ post }) {
             />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <h1>{post.author.username}</h1>
+          <div className="flex items-center gap-3">
+            <h1>{post.author.username}</h1>
+            {user._id === post.author._id && <Badge>Author</Badge>}
+          </div>
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -183,7 +187,6 @@ function Post({ post }) {
           <MessageCircle
             onClick={() => {
               dispatch(setSelectedPost(post));
-
               setOpen(true);
             }}
             className=" cursor-pointer hover:text-gray-600"
@@ -200,16 +203,18 @@ function Post({ post }) {
         <span className=" font-medium mr-2">{post.author.username}</span>
         {post?.caption}
       </p>
-      <span
-        className="text-gray-400"
-        onClick={() => {
-          dispatch(setSelectedPost(post));
+      {comment.length > 0 && (
+        <span
+          onClick={() => {
+            dispatch(setSelectedPost(post));
+            setOpen(true);
+          }}
+          className="text-gray-400"
+        >
+          View All {post.comments.length} Comments
+        </span>
+      )}
 
-          setOpen(true);
-        }}
-      >
-        View All {post.comments.length} Comments
-      </span>
       <CommentDialog open={open} setOpen={setOpen} />
       <div className="flex justify-between mx-1">
         <input

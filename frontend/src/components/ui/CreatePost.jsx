@@ -13,7 +13,7 @@ import { setPosts } from "@/redux/postSlice";
 function CreatePost({ open, setOpen }) {
   const { user } = useSelector((store) => store.auth);
   const { posts } = useSelector((store) => store.post);
-  console.log(user);
+  //console.log(user);
   const dispatch = useDispatch();
   const [file, setFile] = useState("");
   const [caption, setCaption] = useState("");
@@ -22,7 +22,7 @@ function CreatePost({ open, setOpen }) {
   const imageRef = useRef();
   const fileChangeHandler = async (e) => {
     const file = e.target.files?.[0];
-    console.log("Selected File:", file);
+    // console.log("Selected File:", file);
     if (file) {
       setFile(file);
       const dataUrl = await readFileAsDataUrl(file);
@@ -38,7 +38,7 @@ function CreatePost({ open, setOpen }) {
     if (imagePrev) {
       formData.append("image", file);
     }
-    console.log(formData);
+    //console.log(formData);
 
     try {
       setLoading(true);

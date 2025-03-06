@@ -8,7 +8,7 @@ const useGetAllPost = () => {
     const fetchAllPost = async () => {
       try {
         const res = await axiosInstance.get("/api/post/get-all-post");
-        console.log(res.data);
+        //console.log(res.data);
 
         if (res.data.success) {
           dispatch(setPosts(res.data.posts));

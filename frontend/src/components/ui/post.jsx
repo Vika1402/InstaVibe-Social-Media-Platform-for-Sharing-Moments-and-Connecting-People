@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 import axiosInstance from "@/utils/axiosInstant";
 
-import { setPosts } from "@/redux/postSlice";
+import { setPosts, setSelectedPost } from "@/redux/postSlice";
 function Post({ post }) {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
@@ -90,16 +90,16 @@ function Post({ post }) {
     }
   };
 
-  const commentHandler = async (postId) => {
+  const commentHandler = async () => {
     try {
-      const res = await axiosInstance.post(`/api/post/comment/${postId}`, {
+      const res = await axiosInstance.post(`/api/post/comment/${post._id}`, {
         content,
       });
       if (res.data.success) {
-        const updatedCommentData = [...comment, res.data.message];
+        const updatedCommentData = [...comment, res.data.comment];
         setComment(updatedCommentData);
         const updatedPostData = posts.map((p) =>
-          p._id === postId
+          p._id === post._id
             ? {
                 ...p,
                 comments: updatedCommentData,
@@ -107,8 +107,8 @@ function Post({ post }) {
             : p
         );
         dispatch(setPosts(updatedPostData));
-        setContent("");
         toast.success(res.data.message);
+        setContent("");
       }
     } catch (error) {
       console.log(error);
@@ -181,7 +181,11 @@ function Post({ post }) {
           )}
 
           <MessageCircle
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              dispatch(setSelectedPost(post));
+
+              setOpen(true);
+            }}
             className=" cursor-pointer hover:text-gray-600"
           />
           <Send cursor={"pointer"} className="hover:text-gray-600" />
@@ -196,7 +200,14 @@ function Post({ post }) {
         <span className=" font-medium mr-2">{post.author.username}</span>
         {post?.caption}
       </p>
-      <span className="text-gray-400" onClick={() => setOpen(true)}>
+      <span
+        className="text-gray-400"
+        onClick={() => {
+          dispatch(setSelectedPost(post));
+
+          setOpen(true);
+        }}
+      >
         View All {post.comments.length} Comments
       </span>
       <CommentDialog open={open} setOpen={setOpen} />

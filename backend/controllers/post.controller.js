@@ -142,6 +142,8 @@ const addComments = async (req, res) => {
         .json({ success: false, message: "Post not found" });
     }
 
+    const user = await User.findById(userId);
+
     // Create the comment
     const comment = await Comment.create({
       content,
@@ -174,7 +176,7 @@ const getCommentsPostWise = async () => {
   try {
     const postId = req.params.id;
     const comments = await Comment.find({ post: postId }).populate(
-      "author,username,profilePicture"
+      "author username profilePicture"
     );
     if (!comments) {
       return res

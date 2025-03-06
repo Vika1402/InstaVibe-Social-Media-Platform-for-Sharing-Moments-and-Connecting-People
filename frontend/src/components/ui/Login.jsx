@@ -28,14 +28,13 @@ function Login() {
       const res = await axiosInstance.post("/api/user/login", input);
 
       if (res.data.success) {
-        console.log(res.data);
+        //console.log(res.data);
         toast.success(res.data.message);
         dispatch(setAuthUser(res.data.user));
         naviagte("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
-      setInput({ email: "", password: "" });
       //console.log(error);
     } finally {
       setLoading(false);

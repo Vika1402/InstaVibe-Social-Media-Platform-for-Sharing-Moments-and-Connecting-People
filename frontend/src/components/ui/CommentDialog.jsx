@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
-import { Avatar, AvatarImage } from "./avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Link } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./button";
+import { useSelector } from "react-redux";
+import Comment from "./Comment.jsx";
 
 function CommentDialog({ open, setOpen }) {
   const [text, setText] = useState("");
+  const { selectedPost } = useSelector((store) => store.post);
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {
@@ -28,8 +31,7 @@ function CommentDialog({ open, setOpen }) {
           <div className="w-1/2">
             <img
               className=" rounded-lg w-full  h-full  object-cover"
-              src="https://images.unsplash.com/photo-1740940349301-d29d8c62e0f4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxNHx8fGVufDB8fHx8fA%3D%3D"
-              alt=""
+              src={selectedPost?.image}
             />
           </div>
 
@@ -38,12 +40,19 @@ function CommentDialog({ open, setOpen }) {
               <div className="flex gap-3 items-center">
                 <Link>
                   <Avatar>
-                    <AvatarImage src="https://images.unsplash.com/photo-1740940349301-d29d8c62e0f4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxNHx8fGVufDB8fHx8fA%3D%3D" />
+                    <AvatarImage src={selectedPost?.author?.profilePicture} />
+                    <AvatarFallback>DP</AvatarFallback>
                   </Avatar>
                 </Link>
                 <div>
-                  <Link className="text-sm font-semibold">username</Link>
-                  {/* <span className="text-gray-600 text-sm">Bio here...</span> */}
+                  <Link className="text-sm font-semibold">
+                    {selectedPost?.author?.username}
+                  </Link>
+                  <div>
+                    <span className="text-gray-600 text-sm">
+                      {selectedPost?.author?.bio || "bio here..."}
+                    </span>
+                  </div>
                 </div>
               </div>
               <Dialog>
@@ -60,7 +69,9 @@ function CommentDialog({ open, setOpen }) {
             </div>
             <hr />
             <div className="flex-1 overflow-y-auto max-h-96 p-4">
-              comments shower
+              {selectedPost?.comments.map((comment) => (
+                <Comment key={comment._id} comment={comment} />
+              ))}
             </div>
             <div className="p-4">
               <div className="flex items-center gap-2">

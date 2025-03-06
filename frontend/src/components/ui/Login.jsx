@@ -29,13 +29,12 @@ function Login() {
 
       if (res.data.success) {
         //console.log(res.data);
-        toast.success(res.data.message);
-        dispatch(setAuthUser(res.data.user));
         naviagte("/");
+        toast.success(res.data.message);
+        dispatch(setAuthUser(res?.data?.user));
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
-      //console.log(error);
     } finally {
       setLoading(false);
     }

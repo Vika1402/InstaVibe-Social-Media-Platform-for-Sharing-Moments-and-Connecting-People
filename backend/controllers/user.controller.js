@@ -112,7 +112,12 @@ const userLogout = async (req, res) => {
 
 const getProfile = async (req, res) => {
   const userId = req.params.id;
-  let user = await User.findById(userId);
+  let user = await User.findById(userId)
+    .populate({
+      path: "posts",
+      craetedAt: -1,
+    })
+    .populate("savedPost");
   return res.status(200).json({ success: true, user });
 };
 

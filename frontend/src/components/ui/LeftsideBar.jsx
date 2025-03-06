@@ -48,6 +48,9 @@ function LeftsideBar() {
     if (textType === "Profile") {
       navigate(`/profile/${user?._id}`);
     }
+    if (textType === "Home") {
+      navigate("/");
+    }
   };
   const sidebarItem = [
     {
@@ -90,6 +93,7 @@ function LeftsideBar() {
       icon: <LogOut />,
       text: "Logout",
     },
+    
   ];
   return (
     <div className="fixed top-0 left-0 px-4 z-10 border-r border-gray-300 w-[16%] h-screen">

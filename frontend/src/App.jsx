@@ -11,6 +11,7 @@ import Login from "./components/ui/Login";
 import MainLayout from "./components/MainLayout";
 import Home from "./components/ui/Home";
 import Profile from "./components/Profile";
+import EditProfile from "./components/ui/EditProfile";
 
 const browserRouter = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const browserRouter = createBrowserRouter([
       {
         path: "/profile/:id",
         element: <Profile />,
+      },
+      {
+        path: "/editprofile",
+        element: <EditProfile />,
       },
     ],
   },

@@ -51,6 +51,9 @@ function LeftsideBar() {
     if (textType === "Home") {
       navigate("/");
     }
+    if (textType === "message") {
+      navigate("/chatpage");
+    }
   };
   const sidebarItem = [
     {
@@ -93,7 +96,6 @@ function LeftsideBar() {
       icon: <LogOut />,
       text: "Logout",
     },
-    
   ];
   return (
     <div className="fixed top-0 left-0 px-4 z-10 border-r border-gray-300 w-[16%] h-screen">

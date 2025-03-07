@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 import { dbConnect } from "./database/dbConnect.js";
 import { router } from "./routers/router.js";
 import { connectCloudinary } from "./utils/cloudinary.js";
+import { app, server } from "./socket/socket.js";
 dotenv.config();
 connectCloudinary();
-const app = express();
+
 app.use(express.json());
 
 app.use(
@@ -23,7 +24,7 @@ app.get("/", (req, res) => {
   res.json({ message: "server is running .." });
 });
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   dbConnect();
   console.log(`Server is runninmg on port ${process.env.PORT}`);
 });

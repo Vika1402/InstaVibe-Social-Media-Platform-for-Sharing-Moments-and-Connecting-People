@@ -8,10 +8,11 @@ import { MessageCircle, MessageCircleCode } from "lucide-react";
 import Messages from "./Messages";
 
 function ChatPage() {
+  const { onlineUsers } = useSelector((store) => store.chat);
   const { user, suggestedUsers, selectedUser } = useSelector(
     (store) => store.auth
   );
-  const isOnline = true;
+
   const dispatch = useDispatch();
   return (
     <div className="flex ml-[16%] h-screen">
@@ -20,8 +21,10 @@ function ChatPage() {
         <hr className="mb-4 " />
         <div className=" overflow-y-auto h-[80vh]">
           {suggestedUsers.map((suggestedUser) => {
+            const isOnline = onlineUsers.includes(suggestedUser._id);
             return (
               <div
+                key={suggestedUser._id}
                 onClick={() => dispatch(setSelectedUser(suggestedUser))}
                 className="gap-3 p-3 flex items-center hover:bg-gray-50"
               >

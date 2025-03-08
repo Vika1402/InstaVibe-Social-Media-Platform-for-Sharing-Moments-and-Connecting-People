@@ -163,16 +163,25 @@ const editProfile = async (req, res) => {
 };
 
 const getSuggestedUser = async (req, res) => {
-  const suggestedUser = await User.find({ _id: { $ne: req.id } }).select(
-    "-password"
-  );
-  if (!suggestedUser) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No Suggested User Found.." });
-  }
+  try {
+    // Replace with the correct method of getting the logged-in user's ID
+    const userId = req.id;
 
-  return res.status(200).json({ success: true, users: suggestedUser });
+    // Fetch users excluding the logged-in user
+    const suggestedUsers = await User.find({ _id: { $ne: userId } }).select("-password");
+
+
+    if (suggestedUsers.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No Suggested Users Found." });
+    }
+
+    return res.status(200).json({ success: true, users: suggestedUsers });
+  } catch (error) {
+    console.error("Error fetching suggested users:", error.message);
+    return res.status(500).json({ success: false, message: "Server Error." });
+  }
 };
 
 const followOrunfollow = async () => {

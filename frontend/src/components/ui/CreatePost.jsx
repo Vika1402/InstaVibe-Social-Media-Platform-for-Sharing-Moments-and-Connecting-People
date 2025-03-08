@@ -67,7 +67,7 @@ function CreatePost({ open, setOpen }) {
 
         <div onSubmit={createPostHandler} className="flex gap-3 items-center">
           <Avatar>
-            <AvatarImage src={user.profilePicture} />
+            <AvatarImage src={user?.profilePicture} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div>

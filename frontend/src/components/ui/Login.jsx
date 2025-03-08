@@ -1,12 +1,12 @@
 import { Label } from "@radix-ui/react-label";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
 import axiosInstance from "@/utils/axiosInstant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
 
 function Login() {
@@ -20,6 +20,7 @@ function Login() {
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
+  const { user } = useSelector((store) => store.auth);
   const LoginHandler = async (e) => {
     e.preventDefault();
     // console.log(input);
@@ -39,6 +40,12 @@ function Login() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      naviagte("/");
+    }
+  });
   return (
     <div className="flex h-screen w-screen items-center justify-center">
       <form

@@ -75,7 +75,7 @@ function CreatePost({ open, setOpen }) {
               {user?.username}
             </h1>
             <span className="font-semibold text-gray-400 text-xs">
-              {user.bio ? user.bio : "Bio here.."}
+              {user?.bio ? user?.bio : "Bio here.."}
             </span>
           </div>
         </div>

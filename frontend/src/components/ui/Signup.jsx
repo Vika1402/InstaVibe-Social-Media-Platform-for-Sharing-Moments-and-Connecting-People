@@ -1,11 +1,12 @@
 import { Label } from "@radix-ui/react-label";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
 import axiosInstance from "@/utils/axiosInstant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 function Signup() {
   const [input, setInput] = useState({
@@ -13,11 +14,17 @@ function Signup() {
     email: "",
     password: "",
   });
+  const { user } = useSelector((store) => store.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  });
   const signupHandler = async (e) => {
     e.preventDefault();
     console.log(input);
@@ -28,6 +35,7 @@ function Signup() {
       if (res.data.success) {
         toast.success(res.data.message);
         setInput({ email: "", password: "", username: "" });
+        navigate("/login");
       }
     } catch (error) {
       toast.error(error.response.data.message);

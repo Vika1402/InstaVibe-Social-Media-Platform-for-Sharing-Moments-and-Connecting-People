@@ -1,4 +1,3 @@
-import { createAvatarScope } from "@radix-ui/react-avatar";
 import { createSlice } from "@reduxjs/toolkit";
 
 const socketSlice = createSlice({

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { setSelectedUser } from "@/redux/authSlice";
@@ -6,14 +6,39 @@ import { Input } from "./input";
 import { Button } from "./button";
 import { MessageCircle, MessageCircleCode } from "lucide-react";
 import Messages from "./Messages";
+import axiosInstance from "@/utils/axiosInstant";
+import { toast } from "sonner";
+import { setMessages } from "@/redux/chatSlice";
 
 function ChatPage() {
   const { onlineUsers } = useSelector((store) => store.chat);
   const { user, suggestedUsers, selectedUser } = useSelector(
     (store) => store.auth
   );
-
+  const { messages } = useSelector((store) => store.chat);
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
+  const sendMessageHandler = async (reciverId) => {
+    try {
+      const res = await axiosInstance.post(`/api/message/send/${reciverId}`, {
+        message,
+      });
+
+      if (res.data.success) {
+        dispatch(setMessages([...messages, res.data.newMessage]));
+        setMessage("");
+        toast.success(res.data?.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data?.response?.message);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      dispatch(setSelectedUser(null));
+    };
+  }, []);
   return (
     <div className="flex ml-[16%] h-screen">
       <section>
@@ -61,11 +86,15 @@ function ChatPage() {
           <Messages selectedUser={selectedUser} />
           <div className="flex px-1 mb-2">
             <Input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               placeholder="Messages..."
               className="flex-1 mr-2 focus-visible:ring-transparent "
               type="text"
             />
-            <Button>Send</Button>
+            <Button onClick={() => sendMessageHandler(selectedUser._id)}>
+              Send
+            </Button>
           </div>
         </section>
       ) : (

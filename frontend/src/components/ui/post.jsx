@@ -1,12 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-import {
-  Bookmark,
-  MessageCircle,
-  MoreHorizontal,
-  Save,
-  Send,
-} from "lucide-react";
+import { Bookmark, MessageCircle, MoreHorizontal, Send } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "./button";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
@@ -87,6 +81,7 @@ function Post({ post }) {
       }
     } catch (error) {
       toast.error(error.response?.data?.message);
+      console.log(error);
     }
   };
 

@@ -122,7 +122,7 @@ function LeftsideBar() {
                       <PopoverTrigger asChild>
                         <div>
                           <Button
-                            className="rounded-full h-5 w-5 absolute bottom-6 left-6"
+                            className="rounded-full h-5 w-5 absolute bottom-6 left-6 bg-red-600"
                             size="icon"
                           >
                             {likeNotification.length}
@@ -132,14 +132,17 @@ function LeftsideBar() {
                       <PopoverContent>
                         <div>
                           {likeNotification.length === 0 ? (
-                            <p>no notification</p>
+                            <p>No notification</p>
                           ) : (
                             likeNotification.map((notification) => {
                               return (
                                 <div key={notification.userId}>
                                   <Avatar>
                                     <AvatarImage
-                                      src={notification?.userDetails?.username}
+                                      src={
+                                        notification?.userDetails
+                                          ?.profilePicture
+                                      }
                                     />
                                   </Avatar>
                                   <p className="text-sm ">

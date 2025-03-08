@@ -13,6 +13,7 @@ import axiosInstance from "@/utils/axiosInstant";
 
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
 import { Badge } from "./badge";
+
 function Post({ post }) {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
@@ -55,7 +56,18 @@ function Post({ post }) {
       setOpen(false);
     }
   };
-
+  const postSavedHandler = async () => {
+    try {
+      const res = await axiosInstance.get(`/api/post/saved-post/${post?._id}`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   const LikeAnsDislikeHAndler = async (postId) => {
     const action = liked ? "dislike" : "like";
     try {
@@ -131,12 +143,15 @@ function Post({ post }) {
             <MoreHorizontal className=" cursor-pointer" />
           </DialogTrigger>
           <DialogContent className="flex flex-col items-center text-sm text-center">
-            <Button
-              variant="ghost"
-              className="cursor-pointer w-fit border-2  text-gray-800 font-normal"
-            >
-              Unfollow
-            </Button>
+            {post?.author?._id !== user?._id && (
+              <Button
+                variant="ghost"
+                className="cursor-pointer w-fit border-2  text-gray-800 font-normal"
+              >
+                Unfollow
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               className="cursor-pointer w-fit border-2 text-gray-800  font-normal"
@@ -187,9 +202,12 @@ function Post({ post }) {
           />
           <Send cursor={"pointer"} className="hover:text-gray-600" />
         </div>
-        {/* <FaHeart /> */}
 
-        <Bookmark cursor={"pointer"} className="hover:text-gray-600" />
+        <Bookmark
+          onClick={postSavedHandler}
+          cursor={"pointer"}
+          className="hover:text-gray-600"
+        />
       </div>
 
       <span className="font-medium block mb-2">{postLike} likes</span>

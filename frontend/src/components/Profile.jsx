@@ -23,7 +23,7 @@ function Profile() {
   const displayedPost =
     activeTab === "posts" ? userProfile?.posts : userProfile.savedPost;
   return (
-    <div className="flex max-w-5xl justify-center pl-60">
+    <div className="flex max-w-5xl justify-center pl-70">
       <div className="flex flex-col gap-20 p-8">
         <div className="grid grid-cols-2">
           <section className="flex items-center justify-center">

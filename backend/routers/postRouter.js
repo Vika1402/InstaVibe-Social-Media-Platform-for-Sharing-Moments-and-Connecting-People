@@ -28,6 +28,6 @@ postRouter.post("/dislike/:id", isAuthenticated, disLikePost);
 postRouter.post("/comment/:id", isAuthenticated, addComments);
 postRouter.get("/get-comment-postwise/:id", getCommentsPostWise);
 postRouter.post("/delete-post/:id", isAuthenticated, deletePost);
-postRouter.post("/saved-post/:id", isAuthenticated, savedPost);
+postRouter.get("/saved-post/:id", isAuthenticated, savedPost);
 
 export { postRouter };

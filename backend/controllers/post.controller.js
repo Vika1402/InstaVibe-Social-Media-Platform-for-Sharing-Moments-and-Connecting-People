@@ -138,7 +138,7 @@ const disLikePost = async (req, res) => {
     "username profilePicture"
   );
   const postOwnerId = post.author.toString();
-  if (postOwnerId !== likekrnewalauser()) {
+  if (postOwnerId !== likekrnewalauser) {
     const notification = {
       type: "dislike",
       userId: likekrnewalauser,
